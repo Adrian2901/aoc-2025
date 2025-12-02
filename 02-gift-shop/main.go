@@ -68,11 +68,22 @@ func main() {
 		for i := productRange.Start; i <= productRange.End; i++ {
 			idString := strconv.Itoa(i)
 			length := len(idString)
-			if length%2 != 0 {
-				continue
-			}
-			if idString[0:length/2] == idString[length/2:] {
-				invalidNumbers = append(invalidNumbers, idString)
+			for chunkSize := 1; chunkSize <= length/2; chunkSize++ {
+				if length%chunkSize != 0 {
+					continue
+				}
+				chunk := idString[0:chunkSize]
+				isInvalid := true
+				for i := range length / len(chunk) {
+					startIndex := i * chunkSize
+					if idString[startIndex:startIndex+chunkSize] != chunk {
+						isInvalid = false
+					}
+				}
+				if isInvalid {
+					invalidNumbers = append(invalidNumbers, idString)
+					break
+				}
 			}
 		}
 	}
