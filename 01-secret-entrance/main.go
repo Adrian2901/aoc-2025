@@ -62,25 +62,30 @@ func readInput() []Instruction {
 func main() {
 	instructions := readInput()
 	position := StartPosition
-	zeroesCount := 0
+	zeroesCount, zeroClicks := 0, 0
 	for _, rotation := range instructions {
+		orgPosition := position
 		switch rotation.Direction {
 		case "L":
 			position -= rotation.Count
+			if orgPosition == 0 {
+				zeroClicks += rotation.Count / 100
+			} else if rotation.Count >= orgPosition {
+				zeroClicks += (rotation.Count-orgPosition)/100 + 1
+			}
+			position = (position%100 + 100) % 100
 		case "R":
 			position += rotation.Count
+			if position > UpperBoundary {
+				zeroClicks += position / 100
+				position = position % 100
+			}
 		default:
 			continue
-		}
-		if position < LowerBoundary {
-			position = (UpperBoundary + 1) + (position % 100)
-		}
-		if position > UpperBoundary {
-			position = position % 100
 		}
 		if position == 0 {
 			zeroesCount++
 		}
 	}
-	fmt.Printf("Password: %d ", zeroesCount)
+	fmt.Printf("Password: %d, zero clicks: %d", zeroesCount, zeroClicks)
 }
