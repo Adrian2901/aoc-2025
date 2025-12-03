@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 )
 
@@ -35,26 +36,42 @@ func readInput() []string {
 	return banks
 }
 
+func toInt(character byte) int {
+	// to cast an ASCII byte to number we deduct 48
+	return int(character) - 48
+}
+
 func main() {
 	banks := readInput()
+	var numbers [12]int
 	sum := 0
 	for _, bank := range banks {
 		bankSize := len(bank)
-		// to cast an ASCII byte to number we deduct 48
-		first := int(bank[bankSize-2]) - 48
-		second := int(bank[bankSize-1]) - 48
-		for i := bankSize - 3; i >= 0; i-- {
-			num := int(bank[i]) - 48
-			if num < first {
+		initialNumbers := bank[bankSize-12:]
+		for i := range 12 {
+			numbers[i] = toInt(initialNumbers[i])
+		}
+		for i := bankSize - 13; i >= 0; i-- {
+			num := toInt(bank[i])
+			if num < numbers[0] {
 				continue
 			} else {
-				if first > second {
-					second = first
+				temp := numbers[0]
+				numbers[0] = num
+				for i := 1; i < 12; i++ {
+					if temp >= numbers[i] {
+						newValue := temp
+						temp = numbers[i]
+						numbers[i] = newValue
+					} else {
+						break
+					}
 				}
-				first = num
 			}
 		}
-		sum += first*10 + second
+		for i := range 12 {
+			sum += numbers[i] * int(math.Pow(float64(10), float64(11-i)))
+		}
 	}
 	fmt.Println(sum)
 }
