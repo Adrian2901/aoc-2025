@@ -43,16 +43,26 @@ func readInput() [][]string {
 
 func main() {
 	input := readInput()
-	count := 0
-	for i, row := range input {
-		for j, v := range row {
-			if v == "@" {
-				if countRolls(input, i, j) < 4 {
-					count++
+	var count int
+	for {
+		countIteration := 0
+		for i, row := range input {
+			for j, v := range row {
+				if v == "@" {
+					if countRolls(input, i, j) < 4 {
+						countIteration++
+						input[i][j] = "."
+					}
 				}
 			}
 		}
+		if countIteration == 0 {
+			break
+		} else {
+			count += countIteration
+		}
 	}
+
 	fmt.Println(count)
 }
 
