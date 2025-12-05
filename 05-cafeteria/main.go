@@ -69,6 +69,25 @@ func main() {
 		}
 	}
 	fmt.Println(count)
+	var freshIds, tempStart, tempEnd int
+	for _, idRange := range ranges {
+		if idRange.Start == tempStart {
+			continue
+		} else {
+			if idRange.Start <= tempEnd {
+				if idRange.End > tempEnd {
+					freshIds += idRange.End - tempEnd
+					tempEnd = idRange.End
+				}
+			} else {
+				freshIds += idRange.End - idRange.Start + 1
+				tempEnd = idRange.End
+			}
+			tempStart = idRange.Start
+			tempEnd = idRange.End
+		}
+	}
+	fmt.Println(freshIds)
 }
 
 func cmp(a, b Range) int {
